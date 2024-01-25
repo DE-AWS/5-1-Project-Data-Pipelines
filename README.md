@@ -2,6 +2,9 @@
 1. [Project Overview](#schema1)
 2. [Prerequisites](#schema2)
 3. [Project Instructions](#schema3)
+4. [Install, run Airflow](#schema4)
+
+
 [REF](#schemaref)
 
 <hr>
@@ -36,7 +39,7 @@ checks on the data as the final step.
   - Follow the steps on the page Add Airflow Connections to AWS Redshift in the lesson Airflow and AWS.
 
 <hr>
-<a name='schema2'></a>
+<a name='schema3'></a>
 
 ## 3. Project Instructions
 
@@ -46,11 +49,18 @@ checks on the data as the final step.
 For this project, you'll be working with two datasets. Here are the s3 links for each:
 
 Log data: `s3://udacity-dend/log_data`
+
 Song data: `s3://udacity-dend/song-data`
 
 Tip: You will want to copy the data to your own bucket.
 
 
+<hr>
+<a name='schema4'></a>
+
+## 4. Install, run Airflow
+
+Follow the steps of: [5-Data-Quality](../5-1-Project-Data-Pipelines/README.md)
 
 
 
