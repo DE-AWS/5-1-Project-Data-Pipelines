@@ -1,7 +1,8 @@
 # 5-1-Project-Data-Pipelines
 1. [Project Overview](#schema1)
-2. [ Prerequisites](#schema2)
-
+2. [Prerequisites](#schema2)
+3. [Project Instructions](#schema3)
+[REF](#schemaref)
 
 <hr>
 <a name='schema1'></a>
@@ -33,3 +34,33 @@ checks on the data as the final step.
   - Use docker check [4-Automate-Data-Pipelines](../4-Automate-Data-Pipelines/README.md)
 - Connect Airflow to AWS Redshift Serverless
   - Follow the steps on the page Add Airflow Connections to AWS Redshift in the lesson Airflow and AWS.
+
+<hr>
+<a name='schema2'></a>
+
+## 3. Project Instructions
+
+
+**Datasets**
+
+For this project, you'll be working with two datasets. Here are the s3 links for each:
+
+Log data: `s3://udacity-dend/log_data`
+Song data: `s3://udacity-dend/song-data`
+
+Tip: You will want to copy the data to your own bucket.
+
+
+
+
+
+
+<hr>
+<a name='schemaref'></a>
+
+## REF:
+[Sample song_data](https://knowledge.udacity.com/questions/1002142)
+
+```
+aws s3 cp s3://udacity-dend/song_data/A/B/C/TRABCAS128F14A25E2.json ~/song-data/ 
+```
