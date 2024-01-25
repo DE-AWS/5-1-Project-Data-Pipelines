@@ -3,6 +3,7 @@
 2. [Prerequisites](#schema2)
 3. [Project Instructions](#schema3)
 4. [Install, run Airflow](#schema4)
+5. [Project Details](#schema5)
 
 
 [REF](#schemaref)
@@ -63,6 +64,29 @@ Tip: You will want to copy the data to your own bucket.
 Follow the steps of: [5-Data-Quality](../5-1-Project-Data-Pipelines/README.md)
 
 
+<hr>
+<a name='schema5'></a>
+
+## 5. Project Details
+
+- Configuring the DAG. In the DAG, add `default parameters` according to these guidelines
+  - The DAG does not have dependencies on past runs
+  - On failure, the task are retried 3 times
+  - Retries happen every 5 minutes
+  - Catchup is turned off
+  - Do not email on retry
+
+
+- Building the operators ( Stage Operator, Fact and Dimension Operators, Data Quality Operator)
+To complete the project, you need to build four different operators to stage the data, transform the data, 
+and run checks on data quality.
+
+All of the operators and task instances will run SQL statements against the Redshift database. However, 
+using parameters wisely will allow you to build flexible, reusable, and configurable operators you can later apply 
+to many kinds of data pipelines with Redshift and with other databases.
+
+
+
 
 
 <hr>
@@ -74,3 +98,5 @@ Follow the steps of: [5-Data-Quality](../5-1-Project-Data-Pipelines/README.md)
 ```
 aws s3 cp s3://udacity-dend/song_data/A/B/C/TRABCAS128F14A25E2.json ~/song-data/ 
 ```
+
+
