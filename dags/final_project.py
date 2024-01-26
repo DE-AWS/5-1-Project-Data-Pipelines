@@ -7,14 +7,20 @@ from airflow.operators import (StageToRedshiftOperator, LoadFactOperator,LoadDim
 from airflow.helpers import SqlQueries
 
 default_args = {
-    'owner': 'udacity',
+    'owner': 'patri-carrasco',
     'start_date': pendulum.now(),
+    'email_on_failure': False,
+    'email_on_retry': False,
+    'retries': 3,
+    'retry_delay': timedelta(minutes=5),
+    'catchup': False,
 }
+
 
 @dag(
     default_args=default_args,
     description='Load and transform data in Redshift with Airflow',
-    schedule_interval='0 * * * *'
+    schedule_interval='@hourly'
 )
 def final_project():
 
@@ -22,10 +28,23 @@ def final_project():
 
     stage_events_to_redshift = StageToRedshiftOperator(
         task_id='Stage_events',
+        table='stage_events',
+        redshift_conn_id='redshift',
+        aws_credentiasl_id='aws_credentials',
+        s3_bucket='data-pipelines-398321749864',
+        s3_key='log-data',
+        log_json_path='log_json_path'
+
     )
 
     stage_songs_to_redshift = StageToRedshiftOperator(
         task_id='Stage_songs',
+        table='stage_songs',
+        redshift_conn_id='redshift',
+        aws_credentiasl_id='aws_credentials',
+        s3_bucket='data-pipelines-398321749864',
+        s3_key='log-data',
+        log_json_path='auto'
     )
 
     load_songplays_table = LoadFactOperator(
