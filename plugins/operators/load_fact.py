@@ -13,23 +13,24 @@ class LoadFactOperator(BaseOperator):
                  redshift_conn_id="",
                  aws_credentials_id="",
                  table="",
-                 s3_bucket="",
-                 s3_key="",
-                 log_json_path="",
-                 delimiter=",",
-                 ignore_headers=1,
+                 sql='',
+                 append_data=False,
                  *args, **kwargs):
 
         super(LoadFactOperator, self).__init__(*args, **kwargs)
         # Map params here
         self.table = table
         self.redshift_conn_id = redshift_conn_id
-        self.s3_bucket = s3_bucket
-        self.s3_key = s3_key
-        self.log_json_path = log_json_path
-        self.delimiter = delimiter
-        self.ignore_headers = ignore_headers
-        self.aws_credentials_id = aws_credentials_id
-
+        self.append_data = append_data
+        self.sql = sql
     def execute(self, context):
-        self.log.info('LoadFactOperator not implemented yet')
+        aws_hook = AwsHook(self.aws_credentials_id)
+        redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
+        self.log.info('Adding data to {}'.format(self.table))
+
+        if not self.append_data:
+            redshift.run('DELETE FROM {}'.format(self.table))
+
+        self.log.info("Running sql:{}".format(self.sql))
+        redshift.run("INSERT INTO {} {}".format(self.table, self.sql))
+        self.log.info("Successfully completed insert into {}".format(self.table))
