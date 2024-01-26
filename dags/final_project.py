@@ -1,8 +1,10 @@
 from datetime import datetime, timedelta
 import pendulum
 import os
+from airflow import conf
 from airflow.decorators import dag
 from airflow.operators.dummy import DummyOperator
+from airflow.operators.postgres_operator import PostgresOperator
 from airflow.operators import (StageToRedshiftOperator, LoadFactOperator,LoadDimensionOperator, DataQualityOperator)
 from airflow.helpers import SqlQueries
 
@@ -15,7 +17,14 @@ default_args = {
     'retry_delay': timedelta(minutes=5),
     'catchup': False,
 }
+f = open(os.path.join(conf.get('core','dags_folder'),'create_tables.sql'))
+create_tables_sql = f.read()
 
+create_table = PostgresOperator(
+    task_id="create_trips_table",
+    postgres_conn_id="redshift",
+    sql=create_tables_sql
+)
 
 @dag(
     default_args=default_args,
@@ -28,7 +37,7 @@ def final_project():
 
     stage_events_to_redshift = StageToRedshiftOperator(
         task_id='Stage_events',
-        table='stage_events',
+        table='staging_events',
         redshift_conn_id='redshift',
         aws_credentiasl_id='aws_credentials',
         s3_bucket='data-pipelines-398321749864',
@@ -39,16 +48,20 @@ def final_project():
 
     stage_songs_to_redshift = StageToRedshiftOperator(
         task_id='Stage_songs',
-        table='stage_songs',
+        table='staging_songs',
         redshift_conn_id='redshift',
         aws_credentiasl_id='aws_credentials',
         s3_bucket='data-pipelines-398321749864',
-        s3_key='log-data',
+        s3_key='song-data',
         log_json_path='auto'
     )
 
     load_songplays_table = LoadFactOperator(
         task_id='Load_songplays_fact_table',
+        table='songplays',
+        redshift_conn_id="redshift",
+        sql=SqlQueries.songplay_table_insert,
+        append_only=False
     )
 
     load_user_dimension_table = LoadDimensionOperator(
