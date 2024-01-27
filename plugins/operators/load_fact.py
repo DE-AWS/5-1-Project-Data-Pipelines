@@ -1,5 +1,5 @@
 from airflow.hooks.postgres_hook import PostgresHook
-from airflow.hooks.aws_hook import AwsHook
+
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
 
@@ -11,7 +11,6 @@ class LoadFactOperator(BaseOperator):
     def __init__(self,
                  # Define your operators params (with defaults) here
                  redshift_conn_id="",
-                 aws_credentials_id="",
                  table="",
                  sql='',
                  append_data=False,
@@ -24,7 +23,7 @@ class LoadFactOperator(BaseOperator):
         self.append_data = append_data
         self.sql = sql
     def execute(self, context):
-        aws_hook = AwsHook(self.aws_credentials_id)
+
         redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
         self.log.info('Adding data to {}'.format(self.table))
 
