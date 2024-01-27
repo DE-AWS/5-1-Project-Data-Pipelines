@@ -36,27 +36,29 @@ default_args = {
 def final_project():
 
     start_operator = DummyOperator(task_id='Begin_execution')
+    json_path = 's3://udacity-dend/log_json_path.json'
+    extra_params = "FORMAT AS JSON 's3://udacity-dend/log_json_path.json'"
 
     stage_events_to_redshift = StageToRedshiftOperator(
         task_id='stage_events',
         table='staging_events',
         redshift_conn_id='redshift',
         aws_credentials_id='aws_credentials',
-        s3_bucket='data-pipelines-398321749864',
-        s3_key='log-data',
-        log_json_path="log_json_path.json"
+        s3_bucket="udacity-dend",
+        s3_key="log_data",
+        log_json_path='s3://udacity-dend/log_json_path.json'
     )
 
-    # stage_songs_to_redshift = StageToRedshiftOperator(
-    #     task_id='Stage_songs',
-    #     table='staging_songs',
-    #     redshift_conn_id='redshift',
-    #     aws_credentials_id='aws_credentials',
-    #     s3_bucket='data-pipelines-398321749864',
-    #     s3_key='song-data',
-    #     log_json_path='auto'
-    # )
-    #
+    stage_songs_to_redshift = StageToRedshiftOperator(
+        task_id='stage_songs',
+        redshift_conn_id='redshift',
+        aws_credentials_id='aws_credentials',
+        table='staging_songs',
+        s3_bucket='udacity-dend',
+        s3_key='song_data/A/A/A/',
+        #json_path=''
+    )
+
     # load_songplays_table = LoadFactOperator(
     #     task_id='Load_songplays_fact_table',
     #     table='songplays',
@@ -101,6 +103,6 @@ def final_project():
     #     task_id='Run_data_quality_checks',
     # )
     start_operator >> stage_events_to_redshift
-    #start_operator >> stage_songs_to_redshift
+    start_operator >> stage_songs_to_redshift
 
 final_project_dag = final_project()
