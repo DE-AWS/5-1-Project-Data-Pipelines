@@ -1,5 +1,5 @@
 from airflow.hooks.postgres_hook import PostgresHook
-from airflow.hooks.aws_hook import AwsHook
+from airflow.contrib.hooks.aws_hook import AwsHook
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
 
@@ -11,7 +11,7 @@ class StageToRedshiftOperator(BaseOperator):
             FROM '{}'
             ACCESS_KEY_ID '{}'
             SECRET_ACCESS_KEY '{}'
-            FORMAT AS JSON {}
+            JSON '{}'
         """
     # copy_sql = """
     #           COPY {}
@@ -31,8 +31,8 @@ class StageToRedshiftOperator(BaseOperator):
                  s3_bucket="",
                  s3_key="",
                  log_json_path="",
-                 delimiter=",",
-                 ignore_headers=1,
+                 # delimiter=",",
+                 # ignore_headers=1,
                  *args, **kwargs):
 
         super(StageToRedshiftOperator, self).__init__(*args, **kwargs)
@@ -42,8 +42,8 @@ class StageToRedshiftOperator(BaseOperator):
         self.s3_bucket = s3_bucket
         self.s3_key = s3_key
         self.log_json_path = log_json_path
-        self.delimiter = delimiter
-        self.ignore_headers = ignore_headers
+        # self.delimiter = delimiter
+        # self.ignore_headers = ignore_headers
         self.aws_credentials_id = aws_credentials_id
 
     def execute(self, context):
@@ -53,13 +53,18 @@ class StageToRedshiftOperator(BaseOperator):
 
         self.log.info('Clearing data from destination Redshift table"')
         redshift.run("DELETE FROM {}".format(self.table))
-
-        self.log.info("Copying data from S3 to Redshift")
         rendered_key = self.s3_key.format(**context)
-        s3_path = "s3:://{}/{}".format(self.s3_bucket, rendered_key)
+        s3_path = "s3://{}/{}".format(self.s3_bucket, rendered_key)
+        self.log.info(" path s3://{}/{}".format(self.s3_bucket, rendered_key))
+
+
+        self.log_json_path = "s3://{}/{}".format(self.s3_bucket, self.log_json_path)
+
+        self.log.info("Log json path  {}".format(self.log_json_path))
 
         if self.log_json_path != '':
-            self.log_json_path = "s3://{}/{}".format(self.s3_bucket,self.log_json_path)
+            # self.log_json_path = "{}".format(self.log_json_path)
+            # self.log.info("Log json path dentro  {}".format(self.log_json_path))
             formatted_sql = StageToRedshiftOperator.copy_sql.format(
                 self.table,
                 s3_path,
@@ -67,6 +72,7 @@ class StageToRedshiftOperator(BaseOperator):
                 credentials.secret_key,
                 self.log_json_path
             )
+            self.log.info("entra en el formatted_sql"),
         else:
             formatted_sql = StageToRedshiftOperator.copy_sql.format(
                 self.table,
