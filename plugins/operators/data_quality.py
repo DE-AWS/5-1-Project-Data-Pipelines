@@ -24,14 +24,12 @@ class DataQualityOperator(BaseOperator):
         redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
         for table, field in self.table:
 
-            self.log.info(f"hola {table}, {field}")
-
             # Quality check 1 - check that dimension tables have rows
             custom_sql = f"SELECT COUNT(*) FROM {table}"
             rows = redshift.get_first(custom_sql)
-            self.log.info(f'Table: {table} has {rows} rows')
+            self.log.info(f'Table: {table} has {rows[0]} rows')
 
             # Quality check 2 - check that key fields dont have null entries
             custom_sql = f"SELECT COUNT(*) FROM {table} WHERE {field} IS NULL"
             rows = redshift.get_first(custom_sql)
-            self.log.info(f'Field: {field} in table: {table} has {rows} NULL rows')
+            self.log.info(f'Field: {field} in table: {table} has {rows[0]} NULL rows')
