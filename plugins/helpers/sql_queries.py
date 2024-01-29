@@ -20,9 +20,10 @@ class SqlQueries:
     """)
 
     user_table_insert = ("""
-        SELECT distinct userid, firstname, lastname, gender, level
+        SELECT DISTINCT userid, firstname, lastname, gender, level
         FROM staging_events
-        WHERE page='NextSong'
+        WHERE page='NextSong';
+
     """)
 
     song_table_insert = ("""

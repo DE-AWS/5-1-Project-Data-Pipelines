@@ -71,8 +71,10 @@ def final_project():
         task_id='Load_user_dim_table',
         redshift_conn_id='redshift',
         table='users',
-        sql=SqlQueries.user_table_insert,
-        append_data=False
+        #sql=SqlQueries.user_table_insert,
+        append_data=False,
+        sql="""SELECT DISTINCT userid, firstname, lastname, gender, level FROM staging_events WHERE page='NextSong'"""
+
     )
 
     # load_song_dimension_table = LoadDimensionOperator(
