@@ -77,14 +77,14 @@ def final_project():
 
     )
 
-    # load_song_dimension_table = LoadDimensionOperator(
-    #     task_id='Load_song_dim_table',
-    #     redshift_conn_id='redshift',
-    #     table='songs',
-    #     sql=SqlQueries.song_table_insert,
-    #     append_data=False
-    # )
-    #
+    load_song_dimension_table = LoadDimensionOperator(
+        task_id='Load_song_dim_table',
+        redshift_conn_id='redshift',
+        table='songs',
+        sql=SqlQueries.song_table_insert,
+        append_data=False
+    )
+
     # load_artist_dimension_table = LoadDimensionOperator(
     #     task_id='Load_artist_dim_table',
     #     redshift_conn_id='redshift',
@@ -111,5 +111,6 @@ def final_project():
     stage_songs_to_redshift >> load_songplays_table
 
     load_songplays_table >> load_user_dimension_table
+    load_songplays_table >> load_song_dimension_table
 
 final_project_dag = final_project()
