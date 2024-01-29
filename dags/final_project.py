@@ -93,14 +93,14 @@ def final_project():
         append_data=False
     )
 
-    # load_time_dimension_table = LoadDimensionOperator(
-    #     task_id='Load_time_dim_table',
-    #     redshift_conn_id='redshift',
-    #     table='time',
-    #     sql=SqlQueries.time_table_insert
-    #
-    # )
-    #
+    load_time_dimension_table = LoadDimensionOperator(
+        task_id='Load_time_dim_table',
+        redshift_conn_id='redshift',
+        table='time',
+        sql=SqlQueries.time_table_insert
+
+    )
+
     # run_quality_checks = DataQualityOperator(
     #     task_id='Run_data_quality_checks',
     # )
@@ -113,4 +113,7 @@ def final_project():
     load_songplays_table >> load_user_dimension_table
     load_songplays_table >> load_song_dimension_table
     load_songplays_table >> load_artist_dimension_table
+    load_songplays_table >> load_time_dimension_table
+
+
 final_project_dag = final_project()
