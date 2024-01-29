@@ -22,7 +22,6 @@ class LoadDimensionOperator(BaseOperator):
 
     def execute(self, context):
         self.log.info('LoadDimensionOperator ')
-        self.log.info(f" que coño pasa {self.sql}")
 
         redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
         self.log.info('Loading data')
