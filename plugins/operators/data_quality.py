@@ -29,7 +29,13 @@ class DataQualityOperator(BaseOperator):
             rows = redshift.get_first(custom_sql)
             self.log.info(f'Table: {table} has {rows[0]} rows')
 
+            if len(rows) < 1:
+                raise ValueError(f"Data quality check failed. {table} returned no results")
+
             # Quality check 2 - check that key fields dont have null entries
             custom_sql = f"SELECT COUNT(*) FROM {table} WHERE {field} IS NULL"
-            rows = redshift.get_first(custom_sql)
-            self.log.info(f'Field: {field} in table: {table} has {rows[0]} NULL rows')
+            rows_null = redshift.get_first(custom_sql)
+            self.log.info(f'Field: {field} in table: {table} has {rows_null[0]} NULL rows')
+
+            if rows_null[0] > 0:
+                raise ValueError(f"Data quality check failed. {table} has NULL")
